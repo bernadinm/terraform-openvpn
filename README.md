@@ -7,6 +7,16 @@ Most people want to have a personal internet connection without having to concer
 
 ## Setup your workstation for Cloud Use
 
+### Install the Googke SDK
+
+If you are on Windows, Mac, or Linux, you can find the SDK [here.](https://cloud.google.com/sdk/downloads)
+
+### Login into GCP via CLI
+
+```bash
+gcloud init
+```
+
 ```bash
 {
   "client_id": "764049295919-6qr4padvjtnf06pt8ejuq83di341hur.apps.googleusercontent.com",
