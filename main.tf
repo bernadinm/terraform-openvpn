@@ -71,13 +71,76 @@ resource "google_compute_firewall" "ssh" {
     sshKeys = "${var.gce_ssh_user}:${file(var.gce_ssh_pub_key_file)}"
   }
 
-  metadata_startup_script = "echo 'hello world' | tee -a ~/file"
-
    network_interface {
      network = "default"
    }
- }
+
+    service_account {
+        scopes = ["https://www.googleapis.com/auth/compute.readonly"]
+    }
+}
  
+resource "null_resource" "openvpn-install" {
+  # Changes to any instance of the cluster requires re-provisioning
+  triggers {
+    current_vm_instance_id = "${google_compute_instance.vm.id}"
+  }
+  # Bootstrap script can run on any instance of the cluster
+  # So we just choose the first in this case
+  connection {
+    host = "${google_compute_instance.vm.network_interface.0.access_config.0.assigned_nat_ip}"
+    user = "${var.gce_ssh_user}"
+    private_key = "${file("~/.ssh/id_rsa")}"
+  }
+
+  provisioner "file" {
+    content =<<SCRIPT
+#!/bin/sh
+SUBNETWORK=$(curl -H "Metadata-Flavor: Google" "http://metadata.google.internal/computeMetadata/v1/instance/attributes/subnetwork" | cut -f1 -d"/")
+docker pull bernadinm/openssl:1.1.0e
+docker pull bernadinm/openvpn:2.4.0
+mkdir -p openvpn-data/certs 
+cat > openvpn-data/certs/ca.crt <<EOF
+${tls_self_signed_cert.ca_cert.cert_pem}
+EOF
+cat > openvpn-data/certs/server.key <<EOF
+${tls_private_key.openvpn_key.private_key_pem}
+EOF
+cat > openvpn-data/certs/server.crt <<EOF
+${tls_private_key.openvpn_key.public_key_pem}
+EOF
+cat > openvpn-data/server.conf <<EOF
+ca openvpn-data/certs/ca.crt
+cert openvpn-data/certs/server.crt
+key openvpn-data/certs/server.key
+dh openvpn-data/certs/dh2048.pem
+cipher AES-256-CBC
+dev tun
+explicit-exit-notify 1
+ifconfig-pool-persist ipp.txt
+keepalive 10 120
+persist-key
+persist-tun
+port 1194
+proto udp
+server 10.8.0.0 255.255.255.0
+status openvpn-status.log
+verb 3
+EOF
+#docker run -it --entrypoint=/bin/sh -v ~/openvpn-data:/openvpn-data bernadinm/openssl:1.1.0e -c 'openssl dhparam -out openvpn-data/certs/dh2048.pem 2048'
+docker run -it --entrypoint=/bin/sh -v ~/openvpn-data:/openvpn-data bernadinm/openvpn:2.4.0 -c 'openvpn --config openvpn-data/server.conf'
+SCRIPT
+destination = "run.sh"
+ }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo chmod +x run.sh",
+      "bash ./run.sh",
+    ]
+  }
+}
+
 
 resource "google_dns_managed_zone" "my_managed_zone" {
   name        = "managed-zone"
