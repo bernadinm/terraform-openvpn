@@ -4,7 +4,7 @@
 
 This repository is meant to get the bare minimum of running a multi-region DC/OS cluster. It is not as modifiable as dcos/terraform-dcos so please keep this in mind. 
 
-This repo is configured to deploy on us-east-1 and us-west-2 with a transit vpc sitting in between in c![hub-spoke](/cisco-vpn.png)
+This repo is configured to deploy on us-east-1 and us-west-2 with a transit vpc sitting in between in ca-central-1.
 
 ![hub-spoke](https://alln-extcloud-storage.cisco.com/ciscoblogs/blog-Image-Body.png)
 
