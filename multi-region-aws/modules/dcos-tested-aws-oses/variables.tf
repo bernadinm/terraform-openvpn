@@ -19,6 +19,7 @@ variable "aws_ami" {
  coreos_835.13.0_us-west-2 = "ami-4f00e32f"
  coreos_1235.9.0_us-west-2 = "ami-4c49f22c"
  coreos_1465.8.0_us-west-2 = "ami-82bd41fa" # HVM
+ coreos_1465.8.0_us-east-1 = "ami-e2d33d98" # HVM
  rhel_7.3_us-west-2        = "ami-b55a51cc"
  }
 }

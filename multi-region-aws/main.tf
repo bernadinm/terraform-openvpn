@@ -19,15 +19,6 @@ tags {
   }
 }
 
-resource "aws_vpn_gateway" "vpn_gw_main" {
-  vpc_id = "${aws_vpc.default.id}"
-
-  tags {
-    Name = "${data.template_file.cluster-name.rendered}-bursted-vpc"
-    "transitvpc:spoke" = "true"
-  }
-}
-
 # Allow overrides of the owner variable or default to whoami.sh
 data "template_file" "cluster-name" {
  template = "$${username}-tf$${uuid}"
@@ -87,7 +78,7 @@ resource "aws_security_group" "any_access_internal" {
   from_port = 0
   to_port = 0
   protocol = "-1"
-  cidr_blocks = ["${aws_vpc.default.cidr_block}"]
+  cidr_blocks = ["10.0.0.0/8"]
   }
 
  # full access internally
@@ -95,7 +86,7 @@ resource "aws_security_group" "any_access_internal" {
   from_port = 0
   to_port = 0
   protocol = "-1"
-  cidr_blocks = ["${aws_vpc.default.cidr_block}"]
+  cidr_blocks = ["10.0.0.0/8"]
   }
 }
 
@@ -173,7 +164,7 @@ resource "aws_security_group" "master" {
    to_port = 5050
    from_port = 5050
    protocol = "tcp"
-   cidr_blocks = ["${aws_vpc.default.cidr_block}"]
+   cidr_blocks = ["10.0.0.0/8"]
  }
 
  # Adminrouter access from within the vpc
@@ -197,7 +188,7 @@ resource "aws_security_group" "master" {
    to_port = 8080
    from_port = 8080
    protocol = "tcp"
-   cidr_blocks = ["${aws_vpc.default.cidr_block}"]
+   cidr_blocks = ["10.0.0.0/8"]
  }
 
  # Exhibitor access from within the vpc
@@ -205,7 +196,7 @@ resource "aws_security_group" "master" {
    to_port = 8181
    from_port = 8181
    protocol = "tcp"
-   cidr_blocks = ["${aws_vpc.default.cidr_block}"]
+   cidr_blocks = ["10.0.0.0/8"]
  }
 
  # Zookeeper Access from within the vpc
@@ -213,7 +204,7 @@ resource "aws_security_group" "master" {
    to_port = 2181
    from_port = 2181
    protocol = "tcp"
-   cidr_blocks = ["${aws_vpc.default.cidr_block}"]
+   cidr_blocks = ["10.0.0.0/8"]
  }
 
  # outbound internet access
@@ -299,7 +290,7 @@ resource "aws_security_group" "private_slave" {
    from_port = 0
    to_port = 0
    protocol = "-1"
-   cidr_blocks = ["${aws_vpc.default.cidr_block}"]
+   cidr_blocks = ["10.0.0.0/8"]
    }
 
   # full access internally
@@ -307,7 +298,7 @@ resource "aws_security_group" "private_slave" {
    from_port = 0
    to_port = 0
    protocol = "-1"
-   cidr_blocks = ["${aws_vpc.default.cidr_block}"]
+   cidr_blocks = ["10.0.0.0/8"]
    }
 }
 

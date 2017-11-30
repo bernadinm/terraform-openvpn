@@ -1,37 +1,26 @@
-# Remote Private agent instance deploy
+variable "num_of_remote_private_agents" {
+  default = "1"
+}
+
 variable "aws_second_region" {
   description = "AWS region to launch servers."
-  default     = "us-west-1"
+  default     = "us-west-2"
 }
 
 provider "aws" {
   alias = "bursted-vpc"
   profile = "${var.aws_profile}"
-  region = "us-west-1"
-}
-
-variable "num_of_remote_private_agents" {
-  default = "1"
+  region = "${var.aws_second_region}"
 }
 
 # Create a VPC to launch our instances into
 resource "aws_vpc" "bursted_region" {
   provider = "aws.bursted-vpc"
   cidr_block = "10.128.0.0/16"
-  enable_dns_hostnames = "true"
+  #enable_dns_hostnames = "true"
 
 tags {
    Name = "${coalesce(var.owner, data.external.whoami.result["owner"])}"
-  }
-}
-
-resource "aws_vpn_gateway" "vpn_gw" {
-  provider = "aws.bursted-vpc"
-  vpc_id = "${aws_vpc.bursted_region.id}"
-
-  tags {
-    Name = "${data.template_file.cluster-name.rendered}-bursted-vpc"
-    "transitvpc:spoke" = "true"
   }
 }
 
@@ -43,7 +32,7 @@ resource "aws_internet_gateway" "bursted_region" {
 
 # Grant the VPC internet access on its main route table
 resource "aws_route" "second_internet_access" {
-   provider = "aws.bursted-vpc"
+  provider = "aws.bursted-vpc"
    route_table_id         = "${aws_vpc.bursted_region.main_route_table_id}"
    destination_cidr_block = "0.0.0.0/0"
    gateway_id             = "${aws_internet_gateway.bursted_region.id}"
@@ -178,8 +167,6 @@ resource "aws_instance" "remote_agent" {
   count = "${var.num_of_remote_private_agents}"
   instance_type = "${var.aws_agent_instance_type}"
 
-  ebs_optimized = "true"
-
   tags {
    owner = "${coalesce(var.owner, data.external.whoami.result["owner"])}"
    expiration = "${var.expiration}"
@@ -188,7 +175,7 @@ resource "aws_instance" "remote_agent" {
   }
   # Lookup the correct AMI based on the region
   # we specified
-  ami = "ami-a57d4cc5" # coreos_1465.8.0_us-west-1
+  ami = "ami-82bd41fa" # coreos_1235.5.0_us-west-2
 
   # The name of our SSH keypair we created above.
   key_name = "${var.key_name}"

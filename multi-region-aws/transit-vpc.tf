@@ -12,10 +12,40 @@ provider "aws" {
   region = "ca-central-1"
 }
 
+resource "aws_vpn_gateway" "vpn_gw_bursting" {
+  provider = "aws.bursted-vpc"
+  vpc_id = "${aws_vpc.bursted_region.id}"
+
+  tags {
+    Name = "${data.template_file.cluster-name.rendered}-bursted-vpc"
+    "transitvpc:spoke" = "true"
+  }
+}
+
+resource "aws_vpn_gateway" "vpn_gw_main" {
+  vpc_id = "${aws_vpc.default.id}"
+
+  tags {
+    Name = "${data.template_file.cluster-name.rendered}-defaul-vpc"
+    "transitvpc:spoke" = "true"
+  }
+}
+
+resource "aws_vpn_gateway_route_propagation" "bursting" {
+  provider = "aws.bursted-vpc"
+  vpn_gateway_id = "${aws_vpn_gateway.vpn_gw_bursting.id}"
+  route_table_id = "${aws_vpc.bursted_region.main_route_table_id}"
+}
+
+resource "aws_vpn_gateway_route_propagation" "default" {
+  vpn_gateway_id = "${aws_vpn_gateway.vpn_gw_main.id}"
+  route_table_id = "${aws_vpc.default.main_route_table_id}"
+}
+
 resource "aws_cloudformation_stack" "transit-vpc-primary-account" {
   provider = "aws.central"
   name = "${data.template_file.cluster-name.rendered}-transit-vpc-primary-account"
-  capabilities = ["CAPABILITY_IAM"] 
+  capabilities = ["CAPABILITY_IAM"]
   parameters {
     KeyName = "${var.key_name}"
     TerminationProtection = "No"
