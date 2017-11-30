@@ -1,15 +1,11 @@
-resource "null_resource" "on-destroy" {
-   provisioner "local-exec" {
-    when    = "destroy"
-    on_failure = "continue"
-    command = "aws s3 rb s3://$(aws s3 ls | grep s3://${data.template_file.cluster-name.rendered}-transit-vpc | awk '{print $3}') --force"
-    }
+variable "transit_vpc_region" {
+ default = "ca-central-1"
 }
 
 provider "aws" {
   alias = "central"
   profile = "${var.aws_profile}"
-  region = "ca-central-1"
+  region = "${var.transit_vpc_region}"
 }
 
 resource "aws_vpn_gateway" "vpn_gw_bursting" {
