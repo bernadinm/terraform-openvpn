@@ -51,7 +51,13 @@ num_of_remote_private_agents = "5"
 
 1. Navigate to S3 and delete the s3 bucket that is created then run this command below: <owner>-<uniqid>-transit-vpc-pr-vpnconfigs-<id>
 
-2. Destroy cloudformation template
+2. Destroy the VPC connection on us-west-2 and us-east-1
+
+3. Destroy the VPC Private Gateway on us-west-2 and us-east-1
+
+4. Destroy the VPC Customer Gateway on us-west-2 and us-east-1
+
+5. Destroy cloudformation template
 ```bash
 terraform destroy -var-file desired_cluster_profile
 ```

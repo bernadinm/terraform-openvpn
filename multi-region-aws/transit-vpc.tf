@@ -15,6 +15,7 @@ resource "aws_vpn_gateway" "vpn_gw_bursting" {
   tags {
     Name = "${data.template_file.cluster-name.rendered}-bursted-vpc"
     "transitvpc:spoke" = "true"
+    owner = "${coalesce(var.owner, data.external.whoami.result["owner"])}"
   }
 }
 
@@ -24,6 +25,7 @@ resource "aws_vpn_gateway" "vpn_gw_main" {
   tags {
     Name = "${data.template_file.cluster-name.rendered}-defaul-vpc"
     "transitvpc:spoke" = "true"
+     owner = "${coalesce(var.owner, data.external.whoami.result["owner"])}"
   }
 }
 
