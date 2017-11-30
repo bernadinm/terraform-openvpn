@@ -38,6 +38,16 @@ resource "aws_vpn_gateway_route_propagation" "default" {
   route_table_id = "${aws_vpc.default.main_route_table_id}"
 }
 
+resource "aws_vpn_gateway_attachment" "vpn_attachment_bursting" {
+  vpc_id = "${aws_vpc.bursted_region.id}"
+  vpn_gateway_id = "${aws_vpn_gateway.vpn_gw_bursting.id}"
+}
+
+resource "aws_vpn_gateway_attachment" "vpn_attachment_default" {
+  vpc_id = "${aws_vpc.default.id}"
+  vpn_gateway_id = "${aws_vpn_gateway.vpn_gw_main.id}"
+}
+
 resource "aws_cloudformation_stack" "transit-vpc-primary-account" {
   provider = "aws.central"
   name = "${data.template_file.cluster-name.rendered}-transit-vpc-primary-account"

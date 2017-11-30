@@ -49,8 +49,9 @@ num_of_remote_private_agents = "5"
 
 ### Destroy Cluster
 
-You can shutdown/destroy all resources from your environment by running this command below. This may take a long time. ~25 minutes due to cloudformation usage.
+1. Navigate to S3 and delete the s3 bucket that is created then run this command below: <owner>-<uniqid>-transit-vpc-pr-vpnconfigs-<id>
 
+2. Destroy cloudformation template
 ```bash
 terraform destroy -var-file desired_cluster_profile
 ```
