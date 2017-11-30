@@ -57,7 +57,8 @@ num_of_remote_private_agents = "5"
 
 4. Destroy the VPC Customer Gateway on us-west-2 and us-east-1
 
-5. Destroy cloudformation template
+5. Destroy cloudformation and terraform template with this command below
+
 ```bash
 terraform destroy -var-file desired_cluster_profile
 ```
