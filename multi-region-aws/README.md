@@ -6,6 +6,8 @@ This repository is meant to get the bare minimum of running a multi-region DC/OS
 
 This repo is configured to deploy on us-east-1 and us-west-2 with a transit vpc sitting in between in ca-central-1.
 
+![hub-spoke](/cisco-vpn.png)
+
 ### Prerequisites
 
 This may be already accepted at Mesosphere's Dev Account. You can follow this instruction below for any other aws root account.
@@ -47,9 +49,12 @@ os = "coreos_1465.8.0"
 num_of_remote_private_agents = "5"
 ```
 
+```bash
+terraform apply -var-file desired_cluster_profile
+```
 ### Destroy Cluster
 
-1. Navigate to S3 and delete the s3 bucket that is created then run this command below: <owner>-<uniqid>-transit-vpc-pr-vpnconfigs-<id>
+1. Navigate to S3 and delete the s3 bucket that is created then run look for a s3 bucket with this name convention: `<owner>-<uniqid>-transit-vpc-pr-vpnconfigs-<id>`
 
 2. Destroy the VPC connection on us-west-2 and us-east-1
 
@@ -62,3 +67,5 @@ num_of_remote_private_agents = "5"
 ```bash
 terraform destroy -var-file desired_cluster_profile
 ```
+
+Note: AWS launched support for intra-region VPC Peering November 29th, 2017 and we will be moving towards that method instead of this. More information can be found [here](https://aws.amazon.com/about-aws/whats-new/2017/11/announcing-support-for-inter-region-vpc-peering/). No major enhancements should be expected with this repo. It is meant for demo and testing purposes only.
