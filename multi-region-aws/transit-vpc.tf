@@ -8,31 +8,32 @@ provider "aws" {
   region = "${var.transit_vpc_region}"
 }
 
-resource "aws_vpn_gateway" "vpn_gw_bursting" {
+resource "aws_vpn_gateway" "vpn_gw_bursted" {
   provider = "aws.bursted-vpc"
   vpc_id = "${aws_vpc.bursted_region.id}"
 
-  tags {
-    Name = "${data.template_file.cluster-name.rendered}-bursted-vpc"
-    "transitvpc:spoke" = "true"
-    owner = "${coalesce(var.owner, data.external.whoami.result["owner"])}"
-  }
+  # Keys Interpolation Workaround https://github.com/hashicorp/terraform/issues/2042
+  tags = "${map("Name","${data.template_file.cluster-name.rendered}-bursted-vpc","transitvpc:spoke-${coalesce(var.owner, data.external.whoami.result["owner"])}","true","owner","${coalesce(var.owner, data.external.whoami.result["owner"])}")}"
+}
+
+resource "aws_vpn_gateway_route_propagation" "bursted" {
+  provider = "aws.bursted-vpc"
+  vpn_gateway_id = "${aws_vpn_gateway.vpn_gw_bursted.id}"
+  route_table_id = "${aws_vpc.bursted_region.main_route_table_id}"
+}
+
+
+resource "aws_vpn_gateway_attachment" "vpn_attachment_bursted" {
+  provider = "aws.bursted-vpc"
+  vpc_id = "${aws_vpc.bursted_region.id}"
+  vpn_gateway_id = "${aws_vpn_gateway.vpn_gw_bursted.id}"
 }
 
 resource "aws_vpn_gateway" "vpn_gw_main" {
   vpc_id = "${aws_vpc.default.id}"
 
-  tags {
-    Name = "${data.template_file.cluster-name.rendered}-defaul-vpc"
-    "transitvpc:spoke" = "true"
-     owner = "${coalesce(var.owner, data.external.whoami.result["owner"])}"
-  }
-}
-
-resource "aws_vpn_gateway_route_propagation" "bursting" {
-  provider = "aws.bursted-vpc"
-  vpn_gateway_id = "${aws_vpn_gateway.vpn_gw_bursting.id}"
-  route_table_id = "${aws_vpc.bursted_region.main_route_table_id}"
+  # Keys Interpolation Workaround https://github.com/hashicorp/terraform/issues/2042
+  tags = "${map("Name","${data.template_file.cluster-name.rendered}-default-vpc","transitvpc:spoke-${coalesce(var.owner, data.external.whoami.result["owner"])}","true","owner","${coalesce(var.owner, data.external.whoami.result["owner"])}")}"
 }
 
 resource "aws_vpn_gateway_route_propagation" "default" {
@@ -40,10 +41,6 @@ resource "aws_vpn_gateway_route_propagation" "default" {
   route_table_id = "${aws_vpc.default.main_route_table_id}"
 }
 
-resource "aws_vpn_gateway_attachment" "vpn_attachment_bursting" {
-  vpc_id = "${aws_vpc.bursted_region.id}"
-  vpn_gateway_id = "${aws_vpn_gateway.vpn_gw_bursting.id}"
-}
 
 resource "aws_vpn_gateway_attachment" "vpn_attachment_default" {
   vpc_id = "${aws_vpc.default.id}"
@@ -57,6 +54,7 @@ resource "aws_cloudformation_stack" "transit-vpc-primary-account" {
   parameters {
     KeyName = "${var.key_name}"
     TerminationProtection = "No"
+    SpokeTag = "transitvpc:spoke-${coalesce(var.owner, data.external.whoami.result["owner"])}"
   }
 
   template_url = "https://s3-us-west-2.amazonaws.com/mbernadin/transit-vpc-primary-account.template"
