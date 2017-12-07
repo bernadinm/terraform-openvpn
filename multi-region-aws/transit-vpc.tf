@@ -13,7 +13,7 @@ resource "aws_vpn_gateway" "vpn_gw_bursted" {
   vpc_id = "${aws_vpc.bursted_region.id}"
 
   # Keys Interpolation Workaround https://github.com/hashicorp/terraform/issues/2042
-  tags = "${map("Name","${data.template_file.cluster-name.rendered}-bursted-vpc","transitvpc:spoke-${coalesce(var.owner, data.external.whoami.result["owner"])}","true","owner","${coalesce(var.owner, data.external.whoami.result["owner"])}")}"
+  tags = "${map("Name","${data.template_file.cluster-name.rendered}-bursted-vpc","transitvpc:spoke-${data.template_file.cluster-name.rendered}","true","owner","${coalesce(var.owner, data.external.whoami.result["owner"])}")}"
 }
 
 resource "aws_vpn_gateway_route_propagation" "bursted" {
@@ -33,7 +33,7 @@ resource "aws_vpn_gateway" "vpn_gw_main" {
   vpc_id = "${aws_vpc.default.id}"
 
   # Keys Interpolation Workaround https://github.com/hashicorp/terraform/issues/2042
-  tags = "${map("Name","${data.template_file.cluster-name.rendered}-default-vpc","transitvpc:spoke-${coalesce(var.owner, data.external.whoami.result["owner"])}","true","owner","${coalesce(var.owner, data.external.whoami.result["owner"])}")}"
+  tags = "${map("Name","${data.template_file.cluster-name.rendered}-default-vpc","transitvpc:spoke-${data.template_file.cluster-name.rendered}","true","owner","${coalesce(var.owner, data.external.whoami.result["owner"])}")}"
 }
 
 resource "aws_vpn_gateway_route_propagation" "default" {
@@ -54,7 +54,7 @@ resource "aws_cloudformation_stack" "transit-vpc-primary-account" {
   parameters {
     KeyName = "${var.key_name}"
     TerminationProtection = "No"
-    SpokeTag = "transitvpc:spoke-${coalesce(var.owner, data.external.whoami.result["owner"])}"
+    SpokeTag = "transitvpc:spoke-${data.template_file.cluster-name.rendered}"
   }
 
   template_url = "https://s3-us-west-2.amazonaws.com/mbernadin/transit-vpc-primary-account.template"
