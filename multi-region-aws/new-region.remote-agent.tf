@@ -4,7 +4,7 @@ variable "num_of_remote_private_agents" {
 
 variable "aws_second_region" {
   description = "AWS region to launch servers."
-  default     = "us-west-2"
+  default     = "us-east-1"
 }
 
 provider "aws" {
