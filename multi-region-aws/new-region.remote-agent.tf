@@ -13,6 +13,13 @@ provider "aws" {
   region = "${var.aws_second_region}"
 }
 
+# Provide tested AMI and user from listed region startup commands
+module "aws-tested-oses-bursted" {
+      source   = "./modules/dcos-tested-aws-oses"
+      os       = "${var.os}"
+      region   = "${var.aws_second_region}"
+}
+
 # Create a VPC to launch our instances into
 resource "aws_vpc" "bursted_region" {
   provider = "aws.bursted-vpc"
@@ -155,7 +162,7 @@ resource "aws_instance" "remote_agent" {
   # communicate with the resource (instance)
   connection {
     # The default username for our AMI
-    user = "${module.aws-tested-oses.user}"
+    user = "${module.aws-tested-oses-bursted.user}"
 
     # The connection will use the local SSH agent for authentication.
   }
@@ -175,7 +182,7 @@ resource "aws_instance" "remote_agent" {
   }
   # Lookup the correct AMI based on the region
   # we specified
-  ami = "${module.aws-tested-oses.aws_ami}"
+  ami = "${module.aws-tested-oses-bursted.aws_ami}"
 
   # The name of our SSH keypair we created above.
   key_name = "${var.key_name}"
@@ -190,7 +197,7 @@ resource "aws_instance" "remote_agent" {
 
   # OS init script
   provisioner "file" {
-   content = "${module.aws-tested-oses.os-setup}"
+   content = "${module.aws-tested-oses-bursted.os-setup}"
    destination = "/tmp/os-setup.sh"
    }
 
@@ -229,7 +236,7 @@ resource "null_resource" "remote_agent" {
   # So we just choose the first in this case
   connection {
     host = "${element(aws_instance.remote_agent.*.public_ip, count.index)}"
-    user = "${module.aws-tested-oses.user}"
+    user = "${module.aws-tested-oses-bursted.user}"
   }
 
   count = "${var.num_of_remote_private_agents}"
