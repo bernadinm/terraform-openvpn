@@ -83,6 +83,15 @@ variable "num_of_masters" {
   default = 3
 }
 
+variable "fault-domain-detect" {
+ description = "Used to determine the fault domain of instances"
+ type = "map"
+
+ default = {
+  aws = "scripts/cloud/aws/fault-domain-detect.aws.sh"
+ }
+}
+
 variable "owner" {
   description = "Paired with Cloud Cluster Cleaner will notify on expiration via slack. Default is whoami. Can be overwritten by setting the value here"
   default = ""
@@ -448,6 +457,10 @@ variable "dcos_enable_docker_gc" {
 variable "dcos_staged_package_storage_uri" {
  default = ""
  description = "This parameter specifies where to temporarily store DC/OS packages while they are being added. The value must be a file URL, for example, file:///var/lib/dcos/cosmos/staged-packages."
+}
+
+variable "dcos_fault_domain_detect_filename" {
+ default = "scripts/cloud/aws/fault-domain-detect.aws.sh"
 }
 
 variable "dcos_package_storage_uri" {
