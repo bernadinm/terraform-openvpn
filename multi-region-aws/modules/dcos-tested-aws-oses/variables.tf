@@ -8,6 +8,7 @@ variable "aws_default_os_user" {
  }
 }
 
+# AWS recommends all HVM vs PV. HVM Below.
 variable "aws_ami" {
  type = "map"
  default = {
@@ -68,8 +69,20 @@ variable "aws_ami" {
  coreos_1235.9.0_us-west-2      = "ami-4c49f22c"
  coreos_1235.9.0_eu-west-1      = "ami-188dd67e"
  # CoreOS 1465.8.0
- coreos_1465.8.0_us-west-2      = "ami-82bd41fa" # HVM
- coreos_1465.8.0_us-east-1      = "ami-e2d33d98" # HVM
+ coreos_1465.8.0_ap-south-1     = "ami-d18dcbbe"
+ coreos_1465.8.0_eu-west-2      = "ami-6cc6d508"
+ coreos_1465.8.0_eu-west-1      = "ami-40589439"
+ coreos_1465.8.0_ap-northeast-2 = "ami-2d7ca743"
+ coreos_1465.8.0_ap-northeast-1 = "ami-e98c458f"
+ coreos_1465.8.0_sa-east-1      = "ami-42ff822e"
+ coreos_1465.8.0_ca-central-1   = "ami-e899208c"
+ coreos_1465.8.0_ap-southeast-1 = "ami-3f5b2d5c"
+ coreos_1465.8.0_ap-southeast-2 = "ami-b02accd2"
+ coreos_1465.8.0_eu-central-1   = "ami-e1d9688e"
+ coreos_1465.8.0_us-east-1      = "ami-e2d33d98"
+ coreos_1465.8.0_us-east-2      = "ami-5ab7953f"
+ coreos_1465.8.0_us-west-1      = "ami-a57d4cc5"
+ coreos_1465.8.0_us-west-2      = "ami-82bd41fa"
  coreos_1465.8.0_eu-west-1      = "ami-1a589463"
  # RHEL 7.3
  rhel_7.3_ap-south-1            = "ami-29bdc246"
