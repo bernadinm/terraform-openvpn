@@ -264,5 +264,5 @@ resource "null_resource" "remote_agent" {
 }
 
 output "Remote Private Agent Public IP Address" {
-  value = ["${aws_instance.remote_agent.*.public_ip}"]
+  value = "${join(", ", aws_instance.remote_agent.*.public_ip)}"
 }
