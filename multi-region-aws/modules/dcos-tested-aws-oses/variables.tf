@@ -53,6 +53,18 @@ variable "aws_ami" {
  coreos_835.13.0_us-west-1      = "ami-a8aedfc8"
  coreos_835.13.0_us-west-2      = "ami-4f00e32f"
  # CoreOS 1235.9
+ coreos_1235.9.0_ap-south-1     = "ami-7e641511"
+ coreos_1235.9.0_eu-west-2      = "ami-054c5961"
+ coreos_1235.9.0_ap-northeast-2 = "ami-d65889b8"
+ coreos_1235.9.0_ap-northeast-1 = "ami-885f19ef"
+ coreos_1235.9.0_sa-east-1      = "ami-3e5d3952"
+ coreos_1235.9.0_ca-central-1   = "ami-c8c67bac"
+ coreos_1235.9.0_ap-southeast-1 = "ami-14cc7877"
+ coreos_1235.9.0_ap-southeast-2 = "ami-d92422ba"
+ coreos_1235.9.0_eu-central-1   = "ami-9501c8fa"
+ coreos_1235.9.0_us-east-1      = "ami-fd6c94eb"
+ coreos_1235.9.0_us-east-2      = "ami-72032617"
+ coreos_1235.9.0_us-west-1      = "ami-b6bae7d6"
  coreos_1235.9.0_us-west-2      = "ami-4c49f22c"
  coreos_1235.9.0_eu-west-1      = "ami-188dd67e"
  # CoreOS 1465.8.0
