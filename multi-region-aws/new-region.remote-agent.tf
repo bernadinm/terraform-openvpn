@@ -177,7 +177,7 @@ resource "aws_instance" "remote_agent" {
   tags {
    owner = "${coalesce(var.owner, data.external.whoami.result["owner"])}"
    expiration = "${var.expiration}"
-   Name =  "${data.template_file.cluster-name.rendered}-remotepvtagt-${count.index + 1}"
+   Name =  "${data.template_file.cluster-name.rendered}-remote-pvtagt-${count.index + 1}"
    cluster = "${data.template_file.cluster-name.rendered}"
   }
   # Lookup the correct AMI based on the region
