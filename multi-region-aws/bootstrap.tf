@@ -43,6 +43,12 @@ resource "aws_instance" "bootstrap" {
    destination = "/tmp/ip-detect"
    }
 
+  # DCOS fault domain detect script
+  provisioner "file" {
+   source = "${var.dcos_fault_domain_detect_filename}"
+   destination = "/tmp/fault-domain-detect"
+   }
+
   # OS init script
   provisioner "file" {
    content = "${module.aws-tested-oses.os-setup}"
@@ -143,6 +149,7 @@ resource "aws_instance" "bootstrap" {
     dcos_cluster_docker_registry_url = "${var.dcos_cluster_docker_registry_url}"
     dcos_rexray_config = "${var.dcos_rexray_config}"
     dcos_ip_detect_public_contents = "${var.dcos_ip_detect_public_contents}"
+    dcos_fault_domain_detect_public_contents = "${module.fault-domain-detect-contents.script}"
     dcos_enable_docker_gc = "${var.dcos_enable_docker_gc}"
     dcos_staged_package_storage_uri = "${var.dcos_staged_package_storage_uri}"
     dcos_package_storage_uri = "${var.dcos_package_storage_uri}"
@@ -218,6 +225,7 @@ resource "null_resource" "bootstrap" {
     dcos_cluster_docker_registry_url = "${var.dcos_cluster_docker_registry_url}"
     dcos_rexray_config = "${var.dcos_rexray_config}"
     dcos_ip_detect_public_contents = "${var.dcos_ip_detect_public_contents}"
+    dcos_fault_domain_detect_public_contents = "${module.fault-domain-detect-contents.script}"
     dcos_enable_docker_gc = "${var.dcos_enable_docker_gc}"
     dcos_staged_package_storage_uri = "${var.dcos_staged_package_storage_uri}"
     dcos_package_storage_uri = "${var.dcos_package_storage_uri}"

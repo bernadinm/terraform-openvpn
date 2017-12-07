@@ -175,7 +175,7 @@ resource "aws_instance" "remote_agent" {
   }
   # Lookup the correct AMI based on the region
   # we specified
-  ami = "ami-82bd41fa" # coreos_1235.5.0_us-west-2
+  ami = "${module.aws-tested-oses.aws_ami}"
 
   # The name of our SSH keypair we created above.
   key_name = "${var.key_name}"
