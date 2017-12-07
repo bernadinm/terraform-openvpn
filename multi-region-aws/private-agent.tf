@@ -16,7 +16,7 @@ resource "aws_instance" "agent" {
   count = "${var.num_of_private_agents}"
   instance_type = "${var.aws_agent_instance_type}"
 
-  ebs_optimized = "true"
+  # ebs_optimized = "true" # Not supported for all configurations
 
   tags {
    owner = "${coalesce(var.owner, data.external.whoami.result["owner"])}"
