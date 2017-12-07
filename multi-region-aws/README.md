@@ -56,11 +56,7 @@ terraform apply -var-file desired_cluster_profile
 
 2. Destroy the VPC connection on us-west-2 and us-east-1
 
-3. Destroy the VPC Private Gateway on us-west-2 and us-east-1
-
-4. Destroy the VPC Customer Gateway on us-west-2 and us-east-1
-
-5. Destroy cloudformation and terraform template with this command below
+3. Destroy cloudformation and terraform template with this command below
 
 ```bash
 terraform destroy -var-file desired_cluster_profile
