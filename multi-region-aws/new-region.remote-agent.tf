@@ -1,8 +1,13 @@
+# Remote Private agent instance deploy
+variable "aws_remote_agent_az" { 
+  default = "c"
+}
+
 variable "num_of_remote_private_agents" {
   default = "1"
 }
 
-variable "aws_second_region" {
+variable "aws_remote_region" {
   description = "AWS region to launch servers."
   default     = "us-east-1"
 }
@@ -10,14 +15,14 @@ variable "aws_second_region" {
 provider "aws" {
   alias = "bursted-vpc"
   profile = "${var.aws_profile}"
-  region = "${var.aws_second_region}"
+  region = "${var.aws_remote_region}"
 }
 
 # Provide tested AMI and user from listed region startup commands
 module "aws-tested-oses-bursted" {
       source   = "./modules/dcos-tested-aws-oses"
       os       = "${var.os}"
-      region   = "${var.aws_second_region}"
+      region   = "${var.aws_remote_region}"
 }
 
 # Create a VPC to launch our instances into
@@ -45,20 +50,13 @@ resource "aws_route" "second_internet_access" {
    gateway_id             = "${aws_internet_gateway.bursted_region.id}"
 }
 
-# Create a subnet to launch public nodes into
-resource "aws_subnet" "second_public" {
-  provider = "aws.bursted-vpc"
-  vpc_id                  = "${aws_vpc.bursted_region.id}"
-  cidr_block              = "10.128.0.0/22"
-  map_public_ip_on_launch = true
-}
-
 # Create a subnet to launch slave private node into
 resource "aws_subnet" "second_private" {
   provider = "aws.bursted-vpc"
   vpc_id                  = "${aws_vpc.bursted_region.id}"
   cidr_block              = "10.128.4.0/22"
   map_public_ip_on_launch = true
+  availability_zone       = "${var.aws_remote_region}${var.aws_remote_agent_az}"
 }
 
 # A security group that allows all port access to internal vpc
