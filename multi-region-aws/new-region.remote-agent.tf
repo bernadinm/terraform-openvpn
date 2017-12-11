@@ -259,8 +259,9 @@ resource "null_resource" "remote_agent" {
       "sudo ./run.sh",
     ]
   }
+ depends_on = ["aws_vpc_peering_connection_accepter.peer"]
 }
 
-output "Remote Private Agent Public IP Address" {
-  value = "${join(", ", aws_instance.remote_agent.*.public_ip)}"
-}
+#output "Remote Private Agent Public IP Address" {
+#  value = "${join(", ", aws_instance.remote_agent.*.public_ip)}"
+#}
