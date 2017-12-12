@@ -1,6 +1,6 @@
 # Remote Private agent instance deploy
 variable "aws_group_2_remote_agent_az" { 
-  default = "c"
+  default = "b"
 }
 
 variable "num_of_remote_private_agents_group_2" {
