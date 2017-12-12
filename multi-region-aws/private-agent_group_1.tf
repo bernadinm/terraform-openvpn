@@ -1,5 +1,25 @@
+variable "num_of_private_agent_group_1" {
+  description = "DC/OS Private Agents Count"
+  default = 1
+}
+
+# Remote Private agent instance deploy
+variable "aws_default_group_1_private_agent_az" { 
+  default = "a"
+}
+
+# Create a subnet to launch slave private node into
+resource "aws_subnet" "default_group_1_private" {
+  
+  vpc_id                  = "${aws_vpc.default.id}"
+  cidr_block              = "10.0.8.0/22"
+  map_public_ip_on_launch = true
+  availability_zone       = "${var.aws_region}${var.aws_default_group_1_private_agent_az}"
+}
+
+
 # Private agent instance deploy
-resource "aws_instance" "agent" {
+resource "aws_instance" "agent_group_1" {
   # The connection block tells our provisioner how to
   # communicate with the resource (instance)
   connection {
@@ -13,7 +33,7 @@ resource "aws_instance" "agent" {
     volume_size = "${var.aws_agent_instance_disk_size}"
   }
 
-  count = "${var.num_of_private_agents}"
+  count = "${var.num_of_private_agent_group_1}"
   instance_type = "${var.aws_agent_instance_type}"
 
   # ebs_optimized = "true" # Not supported for all configurations
@@ -37,7 +57,7 @@ resource "aws_instance" "agent" {
   # We're going to launch into the same subnet as our ELB. In a production
   # environment it's more common to have a separate private subnet for
   # backend instances.
-  subnet_id = "${aws_subnet.private.id}"
+  subnet_id = "${aws_subnet.default_group_1_private.id}"
 
   # OS init script
   provisioner "file" {
@@ -60,30 +80,21 @@ resource "aws_instance" "agent" {
   }
 }
 
-# Create DCOS Mesos Agent Scripts to execute
-module "dcos-mesos-agent" {
-  source = "git@github.com:amitaekbote/terraform-dcos-enterprise//tf_dcos_core?ref=addnode"
-  bootstrap_private_ip = "${aws_instance.bootstrap.private_ip}"
-  dcos_install_mode    = "${var.state}"
-  dcos_version         = "${var.dcos_version}"
-  role                 = "dcos-mesos-agent"
-}
-
 # Execute generated script on agent
-resource "null_resource" "agent" {
+resource "null_resource" "agent_group_1" {
   # Changes to any instance of the cluster requires re-provisioning
   triggers {
     cluster_instance_ids = "${null_resource.bootstrap.id}"
-    current_ec2_instance_id = "${aws_instance.agent.*.id[count.index]}"
+    current_ec2_instance_id = "${aws_instance.agent_group_1.*.id[count.index]}"
   }
   # Bootstrap script can run on any instance of the cluster
   # So we just choose the first in this case
   connection {
-    host = "${element(aws_instance.agent.*.public_ip, count.index)}"
+    host = "${element(aws_instance.agent_group_1.*.public_ip, count.index)}"
     user = "${module.aws-tested-oses.user}"
   }
 
-  count = "${var.num_of_private_agents}"
+  count = "${var.num_of_private_agent_group_1}"
 
   # Generate and upload Agent script to node
   provisioner "file" {
@@ -107,6 +118,6 @@ resource "null_resource" "agent" {
   }
 }
 
-output "Private Agent Public IP Address" {
-  value = ["${aws_instance.agent.*.public_ip}"]
-}
+#output "Private Agent Public IP Address" {
+#  value = ["${aws_instance.agent_group_1.*.public_ip}"]
+#}

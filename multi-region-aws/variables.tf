@@ -68,11 +68,6 @@ variable "aws_bootstrap_instance_disk_size" {
   default = "60"
 }
 
-variable "num_of_private_agents" {
-  description = "DC/OS Private Agents Count"
-  default = 2
-}
-
 variable "num_of_public_agents" {
   description = "DC/OS Public Agents Count"
   default = 1

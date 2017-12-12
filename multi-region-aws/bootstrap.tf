@@ -80,9 +80,6 @@ resource "aws_instance" "bootstrap" {
     role = "dcos-bootstrap"
     dcos_bootstrap_port = "${var.custom_dcos_bootstrap_port}"
     custom_dcos_download_path = "${var.custom_dcos_download_path}"
-    # TODO(bernadinm) Terraform Bug: 9488.  Templates will not accept list, but only strings.
-    # Workaround is to flatten the list as a string below. Fix when this is closed.
-    dcos_public_agent_list = "\n - ${join("\n - ", aws_instance.public-agent.*.private_ip)}"
     dcos_audit_logging = "${var.dcos_audit_logging}"
     dcos_auth_cookie_secure_flag = "${var.dcos_auth_cookie_secure_flag}"
     dcos_aws_access_key_id = "${var.dcos_aws_access_key_id}"
@@ -130,9 +127,6 @@ resource "aws_instance" "bootstrap" {
     dcos_overlay_network = "${var.dcos_overlay_network}"
     dcos_process_timeout = "${var.dcos_process_timeout}"
     dcos_previous_version = "${var.dcos_previous_version}"
-    dcos_agent_list = "\n - ${join("\n - ", aws_instance.agent.*.private_ip)}"
-    # TODO(bernadinm) Terraform Bug: 9488.  Templates will not accept list, but only strings.
-    # Workaround is to flatten the list as a string below. Fix when this is closed.
     dcos_resolvers  = "\n - ${join("\n - ", var.dcos_resolvers)}"
     dcos_rexray_config_filename = "${var.dcos_rexray_config_filename}"
     dcos_rexray_config_method = "${var.dcos_rexray_config_method}"

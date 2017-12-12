@@ -1,47 +1,15 @@
-# Reattach the public ELBs to the agents if they change
-resource "aws_elb_attachment" "public-agent-elb" {
-  count    = "${var.num_of_public_agents}"
-  elb      = "${aws_elb.public-agent-elb.id}"
-  instance = "${aws_instance.public-agent.*.id[count.index]}"
+variable "num_of_public_agent_group_3" {
+  description = "DC/OS Private Agents Count"
+  default = 1
 }
 
-# Public Agent Load Balancer Access
-# Adminrouter Only
-resource "aws_elb" "public-agent-elb" {
-  name = "${data.template_file.cluster-name.rendered}-pub-agt-elb"
-
-  subnets         = ["${aws_subnet.public.id}"]
-  security_groups = ["${aws_security_group.public_slave.id}"]
-  instances       = ["${aws_instance.public-agent.*.id}"]
-
-  listener {
-    lb_port           = 80
-    instance_port     = 80
-    lb_protocol       = "tcp"
-    instance_protocol = "tcp"
-  }
-
-  listener {
-    lb_port           = 443
-    instance_port     = 443
-    lb_protocol       = "tcp"
-    instance_protocol = "tcp"
-  }
-
-  health_check {
-    healthy_threshold = 2
-    unhealthy_threshold = 2
-    timeout = 2
-    target = "HTTP:9090/_haproxy_health_check"
-    interval = 5
-  }
-
-  lifecycle {
-    ignore_changes = ["name"]
-  }
+# Remote Private agent instance deploy
+variable "aws_group_3_public_agent_az" { 
+  default = "a"
 }
 
-resource "aws_instance" "public-agent" {
+
+resource "aws_instance" "public-agent-group-3" {
   # The connection block tells our provisioner how to
   # communicate with the resource (instance)
   connection {
@@ -102,27 +70,18 @@ resource "aws_instance" "public-agent" {
   }
 }
 
-# Create DCOS Mesos Public Agent Scripts to execute
-module "dcos-mesos-agent-public" {
-  source = "git@github.com:amitaekbote/terraform-dcos-enterprise//tf_dcos_core?ref=addnode"
-  bootstrap_private_ip = "${aws_instance.bootstrap.private_ip}"
-  dcos_install_mode    = "${var.state}"
-  dcos_version         = "${var.dcos_version}"
-  role                 = "dcos-mesos-agent-public"
-}
-
 # Execute generated script on agent
-resource "null_resource" "public-agent" {
+resource "null_resource" "public-agent-group-3" {
   # Changes to any instance of the cluster requires re-provisioning
   triggers {
     cluster_instance_ids = "${null_resource.bootstrap.id}"
-    current_ec2_instance_id = "${aws_instance.public-agent.*.id[count.index]}"
+    current_ec2_instance_id = "${aws_instance.public-agent-group-3.*.id[count.index]}"
   }
 
   # Bootstrap script can run on any instance of the cluster
   # So we just choose the first in this case
   connection {
-    host = "${element(aws_instance.public-agent.*.public_ip, count.index)}"
+    host = "${element(aws_instance.public-agent-group-3.*.public_ip, count.index)}"
     user = "${module.aws-tested-oses.user}"
   }
 
@@ -150,10 +109,6 @@ resource "null_resource" "public-agent" {
   }
 }
 
-output "Public Agent ELB Address" {
-  value = "${aws_elb.public-agent-elb.dns_name}"
-}
-
-output "Public Agent Public IP Address" {
-  value = ["${aws_instance.public-agent.*.public_ip}"]
-}
+#output "Public Agent Public IP Address" {
+#  value = ["${aws_instance.public-agent-group-3.*.public_ip}"]
+#}

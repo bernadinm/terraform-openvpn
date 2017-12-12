@@ -58,6 +58,7 @@ resource "aws_subnet" "public" {
   vpc_id                  = "${aws_vpc.default.id}"
   cidr_block              = "10.0.0.0/22"
   map_public_ip_on_launch = true
+  availability_zone      = "${var.aws_region}b"
 }
 
 # Create a subnet to launch slave private node into
@@ -65,6 +66,7 @@ resource "aws_subnet" "private" {
   vpc_id                  = "${aws_vpc.default.id}"
   cidr_block              = "10.0.4.0/22"
   map_public_ip_on_launch = true
+  availability_zone      = "${var.aws_region}a"
 }
 
 # A security group that allows all port access to internal vpc
