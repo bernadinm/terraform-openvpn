@@ -14,7 +14,7 @@ resource "aws_subnet" "default_group_2_private" {
   vpc_id                  = "${aws_vpc.default.id}"
   cidr_block              = "10.0.12.0/22"
   map_public_ip_on_launch = true
-  availability_zone       = "${var.aws_region}${var.aws_default_group_2_private_agent_az}"
+  availability_zone       = "${var.aws_region}${var.aws_group_2_private_agent_az}"
 }
 
 
