@@ -16,14 +16,6 @@ resource "aws_subnet" "group_1_private" {
   availability_zone       = "${var.aws_remote_region}${var.aws_group_1_remote_agent_az}"
 }
 
-# Create a subnet to launch slave private node into
-resource "aws_subnet" "remote_group_1_private" {
-  provider = "aws.bursted-vpc"
-  vpc_id                  = "${aws_vpc.bursted_region.id}"
-  cidr_block              = "10.128.8.0/22"
-  map_public_ip_on_launch = true
-}
-
 resource "aws_instance" "group_1_remote_agent" {
   provider = "aws.bursted-vpc"
   # The connection block tells our provisioner how to

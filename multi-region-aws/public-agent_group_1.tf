@@ -109,6 +109,6 @@ resource "null_resource" "public-agent-group-1" {
   }
 }
 
-output "Public Agent Public IP Address" {
-  value = ["${aws_instance.public-agent-group-1.*.public_ip}"]
-}
+#output "Public Agent Public IP Address" {
+#  value = ["${aws_instance.public-agent-group-1.*.public_ip}"]
+#}
