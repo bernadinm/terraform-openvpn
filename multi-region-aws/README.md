@@ -84,10 +84,5 @@ terraform apply -var-file desired_cluster_profile.tfvars
 ```bash
 terraform destroy -var-file desired_cluster_profile.tfvars
 ```
-2. Remove the AWS inter-region aws provisioner to revert back to default.
-```bash
-rm -fr $GOPATH/bin/terraform-provider-aws
-```
-
 
 Note: No major enhancements should be expected with this repo. It is meant for demo and testing purposes only.
