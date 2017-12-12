@@ -78,6 +78,7 @@ resource "aws_instance" "agent_group_1" {
   lifecycle {
     ignore_changes = ["tags.Name"]
   }
+  availability_zone = "${var.aws_region}${var.aws_group_1_private_agent_az}"
 }
 
 # Execute generated script on agent
