@@ -4,7 +4,7 @@ variable "num_of_private_agent_group_1" {
 }
 
 # Remote Private agent instance deploy
-variable "aws_default_group_1_private_agent_az" { 
+variable "aws_group_1_private_agent_az" { 
   default = "a"
 }
 

@@ -4,8 +4,8 @@ variable "num_of_private_agent_group_2" {
 }
 
 # Remote Private agent instance deploy
-variable "aws_default_group_2_private_agent_az" { 
-  default = "a"
+variable "aws_group_2_private_agent_az" { 
+  default = "b"
 }
 
 # Create a subnet to launch slave private node into

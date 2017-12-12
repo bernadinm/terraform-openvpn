@@ -8,6 +8,15 @@ variable "aws_group_2_public_agent_az" {
   default = "a"
 }
 
+# Create a subnet to launch slave private node into
+resource "aws_subnet" "default_group_2_public" {
+  
+  vpc_id                  = "${aws_vpc.default.id}"
+  cidr_block              = "10.0.24.0/22"
+  map_public_ip_on_launch = true
+  availability_zone       = "${var.aws_region}${var.aws_default_group_2_public_agent_az}"
+}
+
 
 resource "aws_instance" "public-agent-group-2" {
   # The connection block tells our provisioner how to
@@ -47,7 +56,7 @@ resource "aws_instance" "public-agent-group-2" {
   # We're going to launch into the same subnet as our ELB. In a production
   # environment it's more common to have a separate private subnet for
   # backend instances.
-  subnet_id = "${aws_subnet.public.id}"
+  subnet_id = "${aws_subnet.default_group_2_public.id}"
 
   # OS init script
   provisioner "file" {
