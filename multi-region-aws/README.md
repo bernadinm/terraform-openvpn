@@ -28,8 +28,8 @@ make build
 ## Terraform Quick Start
 
 ```bash
-terraform init -from-module github.com/bernadinm/terraform-openvpn//multi-region-aws
 cp -fr $GOPATH/bin/terraform-provider-aws .
+terraform init -from-module github.com/bernadinm/terraform-openvpn//multi-region-aws
 terraform apply -var-file desired_cluster_profile.tfvars
 ```
 
