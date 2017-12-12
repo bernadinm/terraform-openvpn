@@ -28,6 +28,8 @@ make build
 ## Terraform Quick Start
 
 ```bash
+# Make a new terraform directory prior to running these commands below
+mkdir terraform-demo && cd terraform-demo
 cp -fr $GOPATH/bin/terraform-provider-aws .
 terraform init -from-module github.com/bernadinm/terraform-openvpn//multi-region-aws
 terraform apply -var-file desired_cluster_profile.tfvars
