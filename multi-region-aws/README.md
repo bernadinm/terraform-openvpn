@@ -4,7 +4,6 @@ Requirements
 ------------
 
 -	[Terraform](https://www.terraform.io/downloads.html) 0.10.x
--	[Go](https://golang.org/doc/install) 1.9 (to build the provider plugin)
 
 ## Deploying Multi-Region DCOS 
 
@@ -13,23 +12,10 @@ This repository is meant to get the bare minimum of running a multi-region DC/OS
 This repo is configured to deploy on us-east-1 and us-west-2 with an AWS VPC Peering connection across regions.
 
 
-Prerequisites: Building The Provider 
----------------------
-
-Clone repository to: `$GOPATH/src/github.com/terraform-providers/terraform-provider-aws`
-
-```sh
-mkdir -p $GOPATH/src/github.com/terraform-providers; cd $GOPATH/src/github.com/terraform-providers
-git clone -b inter-region-vpc-peer git@github.com:kl4w/terraform-provider-aws.git
-cd $GOPATH/src/github.com/terraform-providers/terraform-provider-aws
-make build
-```
-
 ## Terraform Quick Start
 
 ```bash
 mkdir terraform-demo && cd terraform-demo
-cp -fr $GOPATH/bin/terraform-provider-aws .
 terraform init -from-module github.com/bernadinm/terraform-openvpn//multi-region-aws
 terraform apply -var-file desired_cluster_profile.tfvars
 ```
