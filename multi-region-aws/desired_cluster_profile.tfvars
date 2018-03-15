@@ -1,5 +1,4 @@
 dcos_version = "1.11-dev"
-os = "centos_7.3"
 expiration = "3h"
 num_of_masters = "1"
 aws_region = "us-east-1"
