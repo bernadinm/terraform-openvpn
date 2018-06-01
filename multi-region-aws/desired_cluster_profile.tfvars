@@ -24,3 +24,7 @@ aws_group_3_remote_agent_az = "c"
 num_of_remote_private_agents_group_1 = "0"
 num_of_remote_private_agents_group_2 = "0"
 num_of_remote_private_agents_group_3 = "0"
+dcos_security = <<EOF
+permissive
+license_key_contents: <INSERT_LICENSE_HERE>
+EOF
