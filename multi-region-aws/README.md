@@ -32,7 +32,7 @@ Change the number of remote nodes in the desired cluster profile.
 
 ```bash 
 $ cat desired_cluster_profile
-dcos_version = "1.11-dev"
+dcos_version = "1.11.2"
 os = "centos_7.3"
 expiration = "3h"
 num_of_masters = "1"
