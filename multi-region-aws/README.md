@@ -1,4 +1,4 @@
-# Multi-Region Open DC/OS on AWS with Terraform
+# Multi-Region Enterprise DC/OS on AWS with Terraform
 
 Requirements
 ------------
