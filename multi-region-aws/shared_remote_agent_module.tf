@@ -123,7 +123,7 @@ resource "aws_security_group" "group_private_slave" {
 
 # Create DCOS Mesos Agent Scripts to execute
 module "dcos-remote-mesos-agent" {
-  source = "git@github.com:amitaekbote/terraform-dcos-enterprise//tf_dcos_core?ref=addnode"
+  source = "git@github.com:mesosphere/terraform-dcos-enterprise//tf_dcos_core"
   bootstrap_private_ip = "${aws_instance.bootstrap.private_ip}"
   dcos_install_mode    = "${var.state}"
   dcos_version         = "${var.dcos_version}"
