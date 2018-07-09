@@ -28,6 +28,68 @@ terraform apply -var-file desired_cluster_profile.tfvars
 * Main DC/OS cluster lives on us-east-1
 * Bursting Node lives in us-west-2
 
+## Configure AWS SSH Keys
+
+You can either upload your existing SSH keys or use an SSH key already created on AWS.
+
+* **Upload existing key**:
+    To upload your own key not stored on AWS, read [how to import your own key](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html#how-to-generate-your-own-key-and-import-it-to-aws)
+
+* **Create new key**:
+    To create a new key via AWS, read [how to create a key pair](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html#having-ec2-create-your-key-pair)
+
+When complete, retrieve the key pair name and ensure that it matches the `ssh_key_name` in your [desired_cluster_profile.tfvars](/aws/desired_cluster_profile.tfvars.example).
+
+**Note**: The [desired_cluster_profile.tfvars](/aws/desired_cluster_profile.tfvars.example) always takes precedence over the [variables.tf](/aws/variables.tf) and is **best practice** for any variable changes that are specific to your cluster.
+
+When you have your key available, you can use ssh-add.
+
+```bash
+ssh-add ~/.ssh/path_to_you_key.pem
+```
+
+**Note**: When using an SSH agent it is best to add the command above to your `~/.bash_profile`. Next time your terminal gets reopened, it will reload your keys automatically.
+
+## Configure IAM AWS Keys
+
+You will need your AWS `aws_access_key_id` and `aws_secret_access_key`. If you don't have one yet, you can get them from the [AWS access keys documentation](
+http://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html).
+
+When you get them, you can install it in your home directory. The default location is `$HOME/.aws/credentials` on Linux and macOS, or `"%USERPROFILE%\.aws\credentials"` for Windows users.
+
+Here is an example of the output when you're done:
+
+```bash
+$ cat ~/.aws/credentials
+[default]
+aws_access_key_id = ACHEHS71DG712w7EXAMPLE
+aws_secret_access_key = /R8SHF+SHFJaerSKE83awf4ASyrF83sa471DHSEXAMPLE
+```
+
+**Note**: `[default]` is the name of the `aws_profile`. You may select a different profile to use in Terraform by adding it to your `desired_cluster_profile.tfvars` as `aws_profile = "<INSERT_CREDENTIAL_PROFILE_NAME_HERE>"`.
+
+## Deploy DC/OS
+
+### Deploying with Custom Configuration
+
+The default variables are tracked in the [variables.tf](/aws/variables.tf) file. Since this file can be overwritten during updates when you may run `terraform get --update` when you fetch new releases of DC/OS to upgrade to, it's best to use the [desired_cluster_profile.tfvars](/aws/desired_cluster_profile.tfvars.example) and set your custom Terraform and DC/OS flags there. This way you can keep track of a single file that you can use manage the lifecycle of your cluster.
+
+#### Supported Operating Systems
+
+Here is the [list of operating systems supported](/aws/modules/dcos-tested-aws-oses/platform/cloud/aws).
+
+#### Supported DC/OS Versions
+
+Here is the [list of DC/OS versions supported](https://github.com/dcos/tf_dcos_core/tree/master/dcos-versions).
+
+**Note**: Master DC/OS version is not meant for production use. It is only for CI/CD testing.
+
+To apply the configuration file, you can use this command below.
+
+```bash
+terraform apply -var-file desired_cluster_profile.tfvars
+```
+
 ### Adding or Remving Remote Nodes or Default Region Nodes
 
 Change the number of remote nodes in the desired cluster profile.
